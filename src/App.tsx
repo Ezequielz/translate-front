@@ -1,8 +1,8 @@
 /* eslint-disable react/react-in-jsx-scope */
 // eslint-disable-next-line import/no-absolute-path
 
-import { useEffect } from 'react'
-import { Container, Row, Col, Button, Stack } from 'react-bootstrap'
+import { useEffect, useRef, useState } from 'react'
+import { Container, Row, Col, Button, Stack, Overlay, Tooltip } from 'react-bootstrap'
 import './App.css'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import { useStore } from './hooks/useStore'
@@ -32,6 +32,8 @@ function App () {
   } = useStore()
 
   const debouncedFromtext = useDebounce(fromText, 300)
+  const [show, setShow] = useState(false);
+  const target = useRef(null);
 
   useEffect(() => {
     if (debouncedFromtext === '') return
@@ -46,6 +48,11 @@ function App () {
 
   const handleClipboard = () => {
     navigator.clipboard.writeText(result).catch(() => {})
+    setShow(true)
+
+    setTimeout(() => {
+      setShow(false)
+    }, 1500);
   }
   const handleSpeak = () => {
     const utterance = new SpeechSynthesisUtterance(result)
@@ -99,12 +106,41 @@ function App () {
               />
               <div style={{ position: 'absolute', left: 0, bottom: 0, display: 'flex' }}>
 
+             
+
                 <Button
                   variant='link'
                   onClick={ handleClipboard }
+                  ref={target}
                 >
                   <ClipboardIcon />
                 </Button>
+
+                <Overlay target={target.current} show={show} placement="bottom" >
+                  {({
+                    placement: _placement,
+                    arrowProps: _arrowProps,
+                    show: _show,
+                    popper: _popper,
+                    hasDoneInitialMeasure: _hasDoneInitialMeasure,
+                    ...props
+                  }) => (
+                    <div
+                      {...props}
+                      style={{
+                        position: 'absolute',
+                        backgroundColor: 'rgba(25, 135, 84, 0.85)',
+                        padding: '2px 10px',
+                        color: 'white',
+                        borderRadius: 3,
+                        ...props.style,
+                      }}
+                    >
+                      Copied text
+                    </div>
+                  )}
+                </Overlay>
+              
 
                 <Button
                   variant='link'

@@ -13,7 +13,7 @@ export const translateService = async({fromLanguage, toLanguage, text}:Props) =>
     if (fromLanguage === toLanguage) return text
 
     try {
-      const {data} = await ApiTranslate.post('/', {fromLanguage, toLanguage, text}, {
+      const {data} = await ApiTranslate.post('/translate', {fromLanguage, toLanguage, text}, {
         headers: {
           'Content-Type': 'application/json'
         }
